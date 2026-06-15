@@ -1,14 +1,18 @@
+import os
 from flask import Flask, render_template
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATE_DIR = os.path.abspath(os.path.join(BASE_DIR, '../templates'))
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR)
 
 @app.route("/")
 def index():
-    return render_template("../templates/index.html")
+    return render_template("index.html")
 
 @app.route("/clock")
 def clock():
-    return render_template("../templates/clock.html", target="2026-05-25T16:36:50")
+    return render_template("clock.html", target="2026-05-25T16:36:50")
 
 if __name__ == "__main__":
     app.run(debug=True)
