@@ -52,7 +52,7 @@
         const min2 = (enddiff / (1000 * 60)) % 60
         const sec2 = (enddiff / 1000) % 60
 
-        const fullhr = (day * 24) + hr + (min / 60) + (sec / 3600)
+        const fullhr = timediff / (1000 * 60 * 60)
 
         const prog = Math.floor(timediff / (1000 * 60 * 60)) / 10000 * 100
 
