@@ -6,13 +6,14 @@ from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 import re
+import os
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
-app.secret_key = "tlqkf ajtwoddl tktmaqjffp"
+app.secret_key = os.getenv("SECRET_KEY")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///database.db")
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 db = SQLAlchemy(app)
 
@@ -53,6 +54,12 @@ class Message(db.Model):
 
 @socketio.on("send_message")
 def handle_message(data):
+    if not current_user.is_authenticated:
+        return
+    
+    if len(data) > 500:
+        return
+    
     msg = Message(username=current_user.username, text=data)
     db.session.add(msg)
     db.session.commit()
@@ -152,6 +159,7 @@ def register():
     return render_template("register.html")
 
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect("/login")
@@ -169,7 +177,9 @@ def admin():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-if __name__ == "__main__":
+if os.getenv("DATABASE_URL") is None:
     with app.app_context():
         db.create_all()
-    socketio.run(app, debug=True)
+
+if __name__ == "__main__":
+    socketio.run(app, debug=True, use_reloader=True)
