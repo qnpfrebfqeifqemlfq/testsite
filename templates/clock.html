@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<body>
+    <div class="container">
+        <div style="height: 100px;">
+            <h3>
+                시작일로부터...
+            </h3>
+            <h1>
+                <span id="day"></span> 일
+                <span id="hr"></span> 시간
+                <span id="min"></span> 분
+                <span id="sec"></span> 초 경과
+                (
+                    <span id="fullhr"></span> 시간
+                )
+            </h1>
+            <h3>
+                10000시간까지...
+            </h3>
+            <h1>
+                <span id="day2"></span> 일
+                <span id="hr2"></span> 시간
+                <span id="min2"></span> 분
+                <span id="sec2"></span> 초 남음
+                (
+                    <span id="fullhr2"></span> 시간
+                )
+                <progress id="progress" value="0" min="0" max="100"></progress>
+            </h1>
+        </div>
+    </div>
+</body>
+<script>
+    const target = new Date("{{ target }}")
+
+    function updateclock() {
+        const enddate = new Date(target.getTime() + 1000 * 3600 * 10000)
+        const today = new Date()
+        const timediff = today - target
+        const enddiff = enddate - today
+
+        const day = timediff / (1000 * 60 * 60 * 24)
+        const hr = (timediff / (1000 * 60 * 60)) % 24
+        const min = (timediff / (1000 * 60)) % 60
+        const sec = (timediff / 1000) % 60
+
+        const day2 = enddiff / (1000 * 60 * 60 * 24)
+        const hr2 = (enddiff / (1000 * 60 * 60)) % 24
+        const min2 = (enddiff / (1000 * 60)) % 60
+        const sec2 = (enddiff / 1000) % 60
+
+        const fullhr = (day * 24) + hr + (min / 60) + (sec / 3600)
+
+        const prog = Math.floor(timediff / (1000 * 60 * 60)) / 10000 * 100
+
+        document.getElementById("day").textContent = Math.floor(day)
+        document.getElementById("day2").textContent = Math.floor(day2)
+        document.getElementById("hr").textContent = Math.floor(hr)
+        document.getElementById("hr2").textContent = Math.floor(hr2)
+        document.getElementById("min").textContent = Math.floor(min)
+        document.getElementById("min2").textContent = Math.floor(min2)
+        document.getElementById("sec").textContent = Math.floor(sec)
+        document.getElementById("sec2").textContent = Math.floor(sec2)
+
+        document.getElementById("fullhr").textContent = fullhr.toFixed(4)
+        document.getElementById("fullhr2").textContent = (10000 - fullhr).toFixed(4)
+
+        document.getElementById("progress").value = prog
+    }
+
+    updateclock()
+                            
+    setInterval(updateclock, 100)
+</script>
+
+</html>
+
+{% endblock %}

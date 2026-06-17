@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div style="height: 100px;">
+        <h3>
+            채팅
+        </h3>
+        <div id="chat-box">
+            {% for msg in messages %}
+            <div class="message">
+                <span class="time">
+                    [ {{ msg.korea_time.strftime("%H:%M") }} ]
+                </span>
+                <span class="username">
+                    {{ msg.username }}
+                </span>
+                <span>
+                    {{ msg.text }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+        <input id="msg" placeholder="메시지 입력">
+        <button onclick="sendMsg()">
+            전송
+        </button>
+        <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    </div>
+</div>
+<script>
+    const socket = io()
+    const chatBox = document.getElementById("chat-box")
+
+    document.getElementById("msg")
+    .addEventListener("keydown", function(event){
+        if(event.key === "Enter"){
+            event.preventDefault()
+            sendMsg()
+        }
+    })
+
+    function sendMsg() {
+        let input = document.getElementById("msg")
+        let msg = input.value.trim();
+
+        if (msg === "") {
+            return;
+        }
+
+        socket.emit("send_message", msg)
+        input.value = ""
+    }
+
+    socket.on(
+        "new_message",
+        function(data) {
+            let div = document.createElement("div")
+            let nearBottom = (chatBox.scrollTop + chatBox.clientHeight) >= (chatBox.scrollHeight - 50);
+
+            div.className = "message"
+
+            div.innerHTML = `
+                <div class="message">
+                    <span class="time"> 
+                        [ ${data.time} ] 
+                    </span>
+                    <span class="username">
+                        ${data.username}
+                    </span>
+                    <span>
+                        ${data.message}
+                    </span>
+                </div>`
+
+            chatBox.appendChild(div)
+
+            if (nearBottom) {
+                chatBox.scrollTop = chatBox.scrollHeight
+            }
+
+            while (chatBox.children.length > 100) {
+                chatBox.removeChild(chatBox.firstElementChild)
+            }
+        }
+    )
+
+    window.onload = function(){
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div style="height: 100px;">
+        <h3>
+            회원가입
+        </h3>
+        <h1>
+            <form method="POST" id="register-form">
+                <input type="text" id="username" name="username" placeholder="ID"><br>
+                <input type="password" id="password"  name="password" placeholder="PW"><br>
+                <button type="submit">회원가입</button>
+            </form>
+        </h1>
+        <p id="idmsg"></p>
+        <p id="pwmsg"></p>
+        <p class="error">
+            {% with messages = get_flashed_messages() %}
+                {% for msg in messages %}
+                    {{ msg }}
+                {% endfor %}
+            {% endwith %}
+        </p>
+    </div>
+</div>
+<script>
+    document.getElementById("register-form")
+    .addEventListener("submit", function(){
+        document.getElementById("submit").disabled = true
+        document.getElementById("submit").innerText = "가입중..."
+    });
+</script>
+
+{% endblock %}

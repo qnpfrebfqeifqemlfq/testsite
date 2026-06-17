@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div style="height: 100px;">
+        <h3>
+            로그인
+        </h3>
+        <h1>
+            <form method="POST">
+                <input type="text" name="username" placeholder="ID"><br>
+                <input type="password" name="password" placeholder="PW"><br>
+                <button type="submit">로그인</button>
+                <button type="button" onclick="alert('비밀번호찾기기능은저의코딩실력만으로는절대못만듭니다비밀번호잊어버리면계정버리세요ㅅㄱ응샌즈위원투런')">비밀번호 찾기</button><br>
+                <button type="button" onclick="location.href='register'">계정이 없나요?</button>
+            </form>
+        </h1>
+        <p class="error">
+            {% with messages = get_flashed_messages() %}
+                {% for msg in messages %}
+                    {{ msg }}
+                {% endfor %}
+            {% endwith %}
+        </p>
+    </div>
+</div>
+
+{% endblock %}
