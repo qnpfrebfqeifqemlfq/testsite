@@ -11,7 +11,12 @@ import os
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = os.getenv("SECRET_KEY")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///database.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300
+}
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
