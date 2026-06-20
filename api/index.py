@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, abort
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
@@ -11,12 +11,7 @@ import os
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = os.getenv("SECRET_KEY")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,
-    "pool_recycle": 300
-}
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///database.db")
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -57,6 +52,10 @@ class Message(db.Model):
         datetime.now(timezone.utc)
     )
 
+class Notice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(200), nullable=False)
+
 @socketio.on("send_message")
 def handle_message(data):
     if not current_user.is_authenticated:
@@ -78,13 +77,18 @@ def handle_message(data):
         },
     )
 
+@app.context_processor
+def inject_notice():
+    notice = Notice.query.first()
+    return dict(notice=notice)
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route("/clock")
 def clock():
-    return render_template("clock.html", target="2026-05-25T16:36:48")
+    return render_template("clock.html")
 
 @app.route("/stock")
 @login_required
@@ -178,12 +182,44 @@ def admin():
     users = User.query.all()
     return render_template("admin.html", users=users)
 
+@app.route("/admin/notice", methods=["GET", "POST"])
+@login_required
+def admin_notice():
+    if not current_user.is_admin:
+        abort(403)
+
+    if request.method == "POST":
+        text = request.form["text"]
+
+        Notice.query.delete()
+
+        notice = Notice(text=text)
+        db.session.add(notice)
+        db.session.commit()
+
+        return redirect("/admin/notice")
+
+    notice = Notice.query.first()
+
+    return render_template("admin_notice.html", notice=notice)
+
+@app.route("/admin/notice/delete")
+@login_required
+def delete_notice():
+    if not current_user.is_admin:
+        abort(403)
+
+    Notice.query.delete()
+    db.session.commit()
+
+    return redirect("/admin/notice")
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-with app.app_context():
-    db.create_all()
-
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+        
     socketio.run(app, debug=True, use_reloader=True)
