@@ -130,7 +130,7 @@
             flex:1;
             word-break:break-word;
         }
-        
+
         .notice {
             position: fixed;
             top: 10px;
@@ -146,16 +146,6 @@
         }
     </style>
 </head>
-
-<body>
-    {% if notice %}
-    <div class="notice">
-        📢 {{ notice.text }}
-    </div>
-    {% endif %}
-    {% block content %}
-    {% endblock %}
-</body>
 
 <body>
     <header>
@@ -177,6 +167,15 @@
             {% endif %}
         </nav>
     </header>
+
+    {% if notice %}
+    <div class="notice">
+        📢 {{ notice.text }}
+    </div>
+    {% endif %}
+    
+    {% block content %}
+    {% endblock %}
 </body>
 
 {% block content %}
