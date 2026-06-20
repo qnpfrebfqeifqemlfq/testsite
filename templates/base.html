@@ -144,6 +144,23 @@
 
             z-index: 9999;
         }
+
+        progress {
+            width: 1000px;
+            height: 20px;
+        }
+
+        @keyframes crazy {
+            0% { font-size: 30px; transform: rotate(0deg); }
+            25% { font-size: 20px; transform: rotate(72eg); }
+            50% { font-size: 10px; transform: rotate(144deg); }
+            75% { font-size: 50px; transform: rotate(216deg); }
+            100% { font-size: 40px; transform: rotate(288deg); }
+        }
+        .raging-text {
+            display: inline-block;
+            animation: crazy 0.2s infinite;
+        }
     </style>
 </head>
 
