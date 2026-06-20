@@ -88,7 +88,7 @@ def index():
 
 @app.route("/clock")
 def clock():
-    return render_template("clock.html", target="2026-06-20 12:10:01")
+    return render_template("clock.html", target="2026-06-20 21:11:51")
 
 @app.route("/stock")
 @login_required
