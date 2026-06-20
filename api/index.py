@@ -193,8 +193,7 @@ def admin_notice():
 
         Notice.query.delete()
 
-        notice = Notice(text=text)
-        db.session.add(notice)
+        db.session.add(Notice(text=text))
         db.session.commit()
 
         return redirect("/admin/notice")
