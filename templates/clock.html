@@ -30,7 +30,15 @@
                 )
                 <progress id="progress" value="0" min="0" max="100"></progress>
             </h1>
-            <h1 style="font-size: 100px; color: red;">태초마을이야!</p>
+            <div class="raging-text">
+                <h1 style="color:red;">태초마을이야!</p>
+            </div>
+            <div class="raging-text">
+                <h1 style="color:red;">태초마을이야!</p>
+            </div>
+            <div class="raging-text">
+                <h1 style="color:red;">태초마을이야!</p>
+            </div>
         </div>
     </div>
 </body>
@@ -43,17 +51,18 @@
         const timediff = today - target
         const enddiff = enddate - today
 
-        const day = timediff / (1000 * 60 * 60 * 24)
-        const hr = (timediff / (1000 * 60 * 60)) % 24
-        const min = (timediff / (1000 * 60)) % 60
-        const sec = (timediff / 1000) % 60
+        const totalsec = Math.floor(timediff / 1000)
+        const totalsecend = Math.floor(enddiff / 1000)
 
-        const day2 = enddiff / (1000 * 60 * 60 * 24)
-        const hr2 = (enddiff / (1000 * 60 * 60)) % 24
-        const min2 = (enddiff / (1000 * 60)) % 60
-        const sec2 = (enddiff / 1000) % 60
+        const day = Math.floor(totalsec / (60 * 60 * 24))
+        const hr = Math.floor((totalsec / (60 * 60)) % 24)
+        const min = Math.floor((totalsec / 60) % 60)
+        const sec = totalsec % 60
 
-        const fullhr = (day * 24) + hr + (min / 60) + (sec / 3600)
+        const day2 = Math.floor(totalsecend / (60 * 60 * 24))
+        const hr2 = Math.floor((totalsecend / (60 * 60)) % 24)
+        const min2 = Math.floor((totalsecend / 60) % 60)
+        const sec2 = totalsecend % 60
 
         const prog = Math.floor(timediff / (1000 * 60 * 60)) / 10000 * 100
 
@@ -66,8 +75,8 @@
         document.getElementById("sec").textContent = Math.floor(sec)
         document.getElementById("sec2").textContent = Math.floor(sec2)
 
-        document.getElementById("fullhr").textContent = fullhr.toFixed(4)
-        document.getElementById("fullhr2").textContent = (10000 - fullhr).toFixed(4)
+        document.getElementById("fullhr").textContent = (timediff / (1000 * 60 * 60)).toFixed(5)
+        document.getElementById("fullhr2").textContent = (10000 - timediff / (1000 * 60 * 60)).toFixed(5)
 
         document.getElementById("progress").value = prog
     }
