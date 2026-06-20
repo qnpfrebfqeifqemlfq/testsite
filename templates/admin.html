@@ -22,6 +22,18 @@
             </tr>
             {% endfor %}
         </table>
+        <form method="POST">
+            <input type="text" name="text" placeholder="공지 입력">
+            <button type="submit">게시</button>
+        </form>
+
+        {% if notice %}
+            <p>현재 공지: {{ notice.text }}</p>
+
+            <a href="/admin/notice/delete">공지 삭제</a>
+        {% else %}
+            <p>공지 없음</p>
+        {% endif %}
     </div>
 </div>
 
