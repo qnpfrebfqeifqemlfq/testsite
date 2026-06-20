@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>공지 관리</title>
+</head>
+<body>
+
+<h2>공지 관리자 페이지</h2>
+
+<!-- 현재 공지 -->
+{% if notice %}
+    <h3>현재 공지: {{ notice.text }}</h3>
+{% else %}
+    <h3>공지 없음</h3>
+{% endif %}
+
+<hr>
+
+<!-- 공지 입력 -->
+<form method="POST">
+    <input type="text" name="text" placeholder="공지 입력">
+    <button type="submit">게시 (덮어쓰기)</button>
+</form>
+
+<!-- 삭제 -->
+<form action="/admin/notice/delete" method="GET">
+    <button type="submit">공지 삭제</button>
+</form>
+
+</body>
+</html>
